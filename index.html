@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duelo de Adivinhação de Anime</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .letter-box {
+            width: 2.25rem; /* 36px */
+            height: 2.25rem; /* 36px */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.125rem; /* 18px */
+            transition: all 0.3s ease;
+        }
+        .revealed-letter {
+            background-color: #059669 !important; /* bg-emerald-600 */
+            color: white;
+            transform: scale(1.1);
+        }
+        .space-box {
+            width: 1.25rem; /* 20px */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-5xl mx-auto">
+        <!-- Status do Jogo -->
+        <div id="game-status-container" class="text-center mb-6">
+            <h1 id="game-status" class="text-3xl sm:text-4xl font-black text-cyan-400 uppercase tracking-wider">Carregando Duelo...</h1>
+        </div>
+
+        <!-- Painéis do Jogo -->
+        <div id="game-panels" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Painel do Jogador -->
+            <div id="player-panel" class="bg-gray-800 p-6 rounded-2xl shadow-xl border-2 border-cyan-500/50">
+                <h2 class="text-2xl font-bold text-center text-cyan-400 mb-4">Seu Painel</h2>
+                <p class="text-center text-gray-400 mb-2">Adivinhe o personagem da IA:</p>
+                
+                <!-- Palavra Secreta da IA -->
+                <div id="ai-word-display" class="flex flex-wrap justify-center gap-2 mb-2 min-h-[36px]"></div>
+                <p id="ai-anime-name" class="text-center text-sm text-yellow-400 font-semibold mb-4 h-5"></p>
+                
+                <!-- Input do Jogador -->
+                <div class="flex gap-2">
+                    <input type="text" id="player-guess-input" placeholder="Digite o nome completo..." class="flex-grow bg-gray-700 text-white placeholder-gray-500 border-2 border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition">
+                    <button id="player-guess-button" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-4 rounded-lg transition shadow-md disabled:opacity-50">Adivinhar</button>
+                </div>
+                
+                <!-- Lista de Tentativas do Jogador -->
+                <div class="mt-4">
+                    <h3 class="font-semibold text-gray-300">Suas Tentativas:</h3>
+                    <ul id="player-guesses-list" class="mt-2 text-gray-400 text-sm h-24 overflow-y-auto bg-gray-900/50 p-2 rounded-md"></ul>
+                </div>
+                <!-- Revelação do Personagem do Jogador -->
+                <p id="player-secret-reveal" class="text-center text-xs text-gray-500 mt-2 hidden">Seu personagem secreto: <span id="player-secret-character-name" class="font-bold text-gray-400"></span></p>
+            </div>
+
+            <!-- Painel da IA -->
+            <div id="ai-panel" class="bg-gray-800 p-6 rounded-2xl shadow-xl border-2 border-gray-600">
+                <h2 class="text-2xl font-bold text-center text-gray-500 mb-4">Oponente: IA</h2>
+                <p class="text-center text-gray-400 mb-2">A IA tenta adivinhar seu personagem:</p>
+                
+                <!-- Palavra Secreta do Jogador -->
+                <div id="player-word-display" class="flex flex-wrap justify-center gap-2 mb-2 min-h-[36px]"></div>
+                <p id="player-anime-name" class="text-center text-sm text-yellow-400 font-semibold mb-4 h-5"></p>
+                
+                <!-- Lista de Tentativas da IA -->
+                <div class="mt-4 pt-8">
+                    <h3 class="font-semibold text-gray-300">Tentativas da IA:</h3>
+                    <ul id="ai-guesses-list" class="mt-2 text-gray-400 text-sm h-32 overflow-y-auto bg-gray-900/50 p-2 rounded-md"></ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botão de Jogar Novamente -->
+        <div class="text-center mt-6">
+            <button id="play-again-button" class="hidden w-full max-w-sm mx-auto bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition shadow-lg">
+                Jogar Novamente
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Elementos da UI ---
+            const gameStatus = document.getElementById('game-status');
+            const gamePanels = document.getElementById('game-panels');
+            const playAgainButton = document.getElementById('play-again-button');
+            const playerPanel = document.getElementById('player-panel');
+            const aiPanel = document.getElementById('ai-panel');
+            
+            // Painel do Jogador
+            const aiWordDisplay = document.getElementById('ai-word-display');
+            const aiAnimeName = document.getElementById('ai-anime-name');
+            const playerGuessInput = document.getElementById('player-guess-input');
+            const playerGuessButton = document.getElementById('player-guess-button');
+            const playerGuessesList = document.getElementById('player-guesses-list');
+            const playerSecretReveal = document.getElementById('player-secret-reveal');
+            const playerSecretCharacterName = document.getElementById('player-secret-character-name');
+            
+            // Painel da IA
+            const playerWordDisplay = document.getElementById('player-word-display');
+            const playerAnimeName = document.getElementById('player-anime-name');
+            const aiGuessesList = document.getElementById('ai-guesses-list');
+            
+
+            // --- Configuração do Jogo ---
+            const ANIME_LIST = [
+                { id: 20, name: 'Naruto' },
+                { id: 1735, name: 'Naruto: Shippuden' },
+                { id: 21, name: 'One Piece' },
+                { id: 813, name: 'Dragon Ball Z' },
+                { id: 30694, name: 'Dragon Ball Super' },
+                { id: 16498, name: 'Attack on Titan' },
+                { id: 38000, name: 'Demon Slayer' },
+                { id: 40748, name: 'Jujutsu Kaisen' },
+                { id: 44511, name: 'Chainsaw Man' },
+                { id: 52299, name: 'Solo Leveling' },
+                { id: 5231, name: 'Inazuma Eleven' }
+            ];
+
+            // --- Estado do Jogo ---
+            let playerSecretWord = '', aiSecretWord = '';
+            let playerSecretAnime = '', aiSecretAnime = '';
+            let playerGuesses = [], aiGuesses = [];
+            let isPlayerTurn = true;
+            let isGameOver = false;
+            let playerWrongGuesses = 0;
+            let revealedIndices = [];
+
+            // --- Funções do Jogo ---
+
+            async function fetchCharacterFromList() {
+                try {
+                    const randomAnime = ANIME_LIST[Math.floor(Math.random() * ANIME_LIST.length)];
+                    const response = await fetch(`https://api.jikan.moe/v4/anime/${randomAnime.id}/characters`);
+                    if (!response.ok) throw new Error(`API Error on anime ${randomAnime.id}: ${response.status}`);
+                    
+                    const data = await response.json();
+                    const characters = data.data;
+
+                    const mainCharacters = characters.filter(c => c.role === 'Main');
+                    const characterPool = mainCharacters.length > 0 ? mainCharacters : characters;
+                    
+                    if (characterPool.length === 0) {
+                        return fetchCharacterFromList();
+                    }
+
+                    const randomCharacter = characterPool[Math.floor(Math.random() * characterPool.length)];
+                    const characterName = randomCharacter.character.name.split('/')[0].split('(')[0].trim();
+                    
+                    return {
+                        characterName: characterName,
+                        animeName: randomAnime.name
+                    };
+                } catch (error) {
+                    console.error("Error fetching character, trying again.", error);
+                    await new Promise(res => setTimeout(res, 1000));
+                    return fetchCharacterFromList();
+                }
+            }
+
+            async function startGame() {
+                isGameOver = false;
+                isPlayerTurn = true;
+                playerGuesses = [];
+                aiGuesses = [];
+                playerWrongGuesses = 0;
+                revealedIndices = [];
+
+                gameStatus.textContent = 'Buscando personagens...';
+                gameStatus.className = 'text-3xl sm:text-4xl font-black text-cyan-400 uppercase tracking-wider';
+                gamePanels.classList.add('hidden');
+                playAgainButton.classList.add('hidden');
+                playerGuessesList.innerHTML = '';
+                aiGuessesList.innerHTML = '';
+                playerSecretReveal.classList.add('hidden');
+                playerSecretCharacterName.textContent = '';
+                
+                try {
+                    const [char1, char2] = await Promise.all([fetchCharacterFromList(), fetchCharacterFromList()]);
+                    
+                    aiSecretWord = char1.characterName;
+                    aiSecretAnime = char1.animeName;
+                    playerSecretWord = char2.characterName;
+                    playerSecretAnime = char2.animeName;
+
+                    renderWordDisplay(aiWordDisplay, aiSecretWord, revealedIndices);
+                    // CORREÇÃO: Mostra o anime do personagem da IA no painel da IA
+                    playerAnimeName.textContent = `Anime: ${aiSecretAnime}`;
+                    
+                    renderWordDisplay(playerWordDisplay, playerSecretWord, []);
+                    // CORREÇÃO: Mostra o anime do SEU personagem no SEU painel
+                    aiAnimeName.textContent = `Anime: ${playerSecretAnime}`;
+                    
+                    playerSecretCharacterName.textContent = playerSecretWord;
+                    playerSecretReveal.classList.remove('hidden');
+
+                    gamePanels.classList.remove('hidden');
+                    updateTurnUI();
+
+                } catch (error) {
+                    console.error("Erro ao iniciar o jogo:", error);
+                    gameStatus.textContent = 'Erro ao carregar. Tente novamente.';
+                    playAgainButton.classList.remove('hidden');
+                }
+            }
+            
+            function renderWordDisplay(container, word, revealedIdxs, revealAll = false) {
+                container.innerHTML = '';
+                for (let i = 0; i < word.length; i++) {
+                    const char = word[i];
+                    const charElement = document.createElement('span');
+                    if (char === ' ') {
+                        charElement.className = 'space-box';
+                    } else {
+                        charElement.className = 'bg-gray-700 rounded-md letter-box';
+                        if (revealAll || revealedIdxs.includes(i)) {
+                            charElement.textContent = char;
+                            if (revealedIdxs.includes(i)) {
+                                charElement.classList.add('revealed-letter');
+                            }
+                            if (revealAll) {
+                                charElement.classList.add('bg-green-700', 'text-white');
+                            }
+                        }
+                    }
+                    container.appendChild(charElement);
+                }
+            }
+
+            function updateTurnUI() {
+                if (isGameOver) return;
+
+                if (isPlayerTurn) {
+                    gameStatus.textContent = "Sua Vez!";
+                    playerGuessInput.disabled = false;
+                    playerGuessButton.disabled = false;
+                    playerGuessInput.focus();
+                    playerPanel.classList.replace('border-gray-600', 'border-cyan-500/50');
+                    aiPanel.classList.replace('border-cyan-500/50', 'border-gray-600');
+                } else {
+                    gameStatus.textContent = "IA está pensando...";
+                    playerGuessInput.disabled = true;
+                    playerGuessButton.disabled = true;
+                    aiPanel.classList.replace('border-gray-600', 'border-cyan-500/50');
+                    playerPanel.classList.replace('border-cyan-500/50', 'border-gray-600');
+                    setTimeout(handleAiTurn, 2000);
+                }
+            }
+
+            function handlePlayerGuess() {
+                if (!isPlayerTurn || isGameOver) return;
+                const guess = playerGuessInput.value.trim();
+                if (!guess) return;
+
+                playerGuesses.push(guess);
+                updateGuessList(playerGuessesList, playerGuesses);
+                playerGuessInput.value = '';
+
+                if (guess.toLowerCase() === aiSecretWord.toLowerCase()) {
+                    gameOver(true);
+                } else {
+                    playerWrongGuesses++;
+                    if (playerWrongGuesses > 0 && playerWrongGuesses % 3 === 0) {
+                        revealLetter();
+                    }
+                    isPlayerTurn = false;
+                    updateTurnUI();
+                }
+            }
+
+            function revealLetter() {
+                const hiddenIndices = [];
+                for (let i = 0; i < aiSecretWord.length; i++) {
+                    if (aiSecretWord[i] !== ' ' && !revealedIndices.includes(i)) {
+                        hiddenIndices.push(i);
+                    }
+                }
+
+                if (hiddenIndices.length > 0) {
+                    const randomIndex = hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)];
+                    revealedIndices.push(randomIndex);
+                    renderWordDisplay(aiWordDisplay, aiSecretWord, revealedIndices);
+                }
+            }
+
+            async function handleAiTurn() {
+                if (isPlayerTurn || isGameOver) return;
+                
+                const { characterName: aiGuess } = await fetchCharacterFromList();
+
+                aiGuesses.push(aiGuess);
+                updateGuessList(aiGuessesList, aiGuesses);
+
+                if (aiGuess.toLowerCase() === playerSecretWord.toLowerCase()) {
+                    gameOver(false);
+                } else {
+                    isPlayerTurn = true;
+                    updateTurnUI();
+                }
+            }
+
+            function updateGuessList(listElement, guesses) {
+                const li = document.createElement('li');
+                li.textContent = guesses[guesses.length - 1];
+                listElement.prepend(li);
+            }
+
+            function gameOver(playerWon) {
+                isGameOver = true;
+                playerGuessInput.disabled = true;
+                playerGuessButton.disabled = true;
+                
+                if (playerWon) {
+                    gameStatus.textContent = "Você Venceu!";
+                    gameStatus.className = 'text-3xl sm:text-4xl font-black text-green-400 uppercase tracking-wider';
+                } else {
+                    gameStatus.textContent = "A IA Venceu!";
+                    gameStatus.className = 'text-3xl sm:text-4xl font-black text-red-500 uppercase tracking-wider';
+                }
+
+                renderWordDisplay(aiWordDisplay, aiSecretWord, [], true);
+                renderWordDisplay(playerWordDisplay, playerSecretWord, [], true);
+                
+                playAgainButton.classList.remove('hidden');
+            }
+
+            // --- Event Listeners ---
+            playerGuessButton.addEventListener('click', handlePlayerGuess);
+            playerGuessInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') handlePlayerGuess();
+            });
+            playAgainButton.addEventListener('click', startGame);
+
+            // --- Início do Jogo ---
+            startGame();
+        });
+    </script>
+</body>
+</html>
