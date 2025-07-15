@@ -34,6 +34,13 @@
 </head>
 <body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4">
 
+    <!-- Botão do Tutorial -->
+    <button id="tutorial-button" class="fixed top-5 right-5 text-gray-400 hover:text-cyan-400 transition z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+        </svg>
+    </button>
+
     <div class="w-full max-w-5xl mx-auto">
         <!-- Status do Jogo -->
         <div id="game-status-container" class="text-center mb-6">
@@ -48,22 +55,18 @@
                 <h2 class="text-2xl font-bold text-center text-cyan-400 mb-4">Seu Painel</h2>
                 <p class="text-center text-gray-400 mb-2">Adivinhe o personagem da IA:</p>
                 
-                <!-- Palavra Secreta da IA -->
                 <div id="ai-word-display" class="flex flex-wrap justify-center gap-2 mb-2 min-h-[36px]"></div>
                 <p id="ai-anime-name" class="text-center text-sm text-yellow-400 font-semibold mb-4 h-5"></p>
                 
-                <!-- Input do Jogador -->
                 <div class="flex gap-2">
                     <input type="text" id="player-guess-input" placeholder="Digite o nome completo..." class="flex-grow bg-gray-700 text-white placeholder-gray-500 border-2 border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition">
                     <button id="player-guess-button" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-4 rounded-lg transition shadow-md disabled:opacity-50">Adivinhar</button>
                 </div>
                 
-                <!-- Lista de Tentativas do Jogador -->
                 <div class="mt-4">
                     <h3 class="font-semibold text-gray-300">Suas Tentativas:</h3>
                     <ul id="player-guesses-list" class="mt-2 text-gray-400 text-sm h-24 overflow-y-auto bg-gray-900/50 p-2 rounded-md"></ul>
                 </div>
-                <!-- Revelação do Personagem do Jogador -->
                 <p id="player-secret-reveal" class="text-center text-xs text-gray-500 mt-2 hidden">Seu personagem secreto: <span id="player-secret-character-name" class="font-bold text-gray-400"></span></p>
             </div>
 
@@ -72,11 +75,9 @@
                 <h2 class="text-2xl font-bold text-center text-gray-500 mb-4">Oponente: IA</h2>
                 <p class="text-center text-gray-400 mb-2">A IA tenta adivinhar seu personagem:</p>
                 
-                <!-- Palavra Secreta do Jogador -->
                 <div id="player-word-display" class="flex flex-wrap justify-center gap-2 mb-2 min-h-[36px]"></div>
                 <p id="player-anime-name" class="text-center text-sm text-yellow-400 font-semibold mb-4 h-5"></p>
                 
-                <!-- Lista de Tentativas da IA -->
                 <div class="mt-4 pt-8">
                     <h3 class="font-semibold text-gray-300">Tentativas da IA:</h3>
                     <ul id="ai-guesses-list" class="mt-2 text-gray-400 text-sm h-32 overflow-y-auto bg-gray-900/50 p-2 rounded-md"></ul>
@@ -84,11 +85,40 @@
             </div>
         </div>
         
-        <!-- Botão de Jogar Novamente -->
         <div class="text-center mt-6">
             <button id="play-again-button" class="hidden w-full max-w-sm mx-auto bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition shadow-lg">
                 Jogar Novamente
             </button>
+        </div>
+    </div>
+
+    <!-- Modal do Tutorial -->
+    <div id="tutorial-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 items-center justify-center z-40 p-4">
+        <div class="bg-gray-800 rounded-2xl shadow-xl p-8 max-w-lg w-full relative border-2 border-cyan-500/50">
+            <button id="close-tutorial-button" class="absolute top-4 right-4 text-gray-500 hover:text-white transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h2 class="text-2xl font-bold text-cyan-400 mb-6 text-center">Como Jogar</h2>
+            <ul class="space-y-4 text-gray-300 text-lg">
+                <li class="flex items-start">
+                    <span class="text-cyan-400 mr-3 mt-1">&#10148;</span>
+                    <span>Acerte o nome do personagem que seu oponente recebeu.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-cyan-400 mr-3 mt-1">&#10148;</span>
+                    <span>Como dica, o nome do anime do personagem do seu oponente é exibido no painel dele.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-cyan-400 mr-3 mt-1">&#10148;</span>
+                    <span>A cada 3 erros seus, uma letra do personagem da IA é revelada para te ajudar.</span>
+                </li>
+                 <li class="flex items-start">
+                    <span class="text-cyan-400 mr-3 mt-1">&#10148;</span>
+                    <span>O mesmo vale para a IA: a cada 3 erros dela, uma letra do seu personagem é revelada.</span>
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -100,8 +130,10 @@
             const playAgainButton = document.getElementById('play-again-button');
             const playerPanel = document.getElementById('player-panel');
             const aiPanel = document.getElementById('ai-panel');
+            const tutorialButton = document.getElementById('tutorial-button');
+            const tutorialModal = document.getElementById('tutorial-modal');
+            const closeTutorialButton = document.getElementById('close-tutorial-button');
             
-            // Painel do Jogador
             const aiWordDisplay = document.getElementById('ai-word-display');
             const aiAnimeName = document.getElementById('ai-anime-name');
             const playerGuessInput = document.getElementById('player-guess-input');
@@ -110,109 +142,69 @@
             const playerSecretReveal = document.getElementById('player-secret-reveal');
             const playerSecretCharacterName = document.getElementById('player-secret-character-name');
             
-            // Painel da IA
             const playerWordDisplay = document.getElementById('player-word-display');
             const playerAnimeName = document.getElementById('player-anime-name');
             const aiGuessesList = document.getElementById('ai-guesses-list');
             
-
-            // --- Configuração do Jogo ---
             const ANIME_LIST = [
-                { id: 20, name: 'Naruto' },
-                { id: 1735, name: 'Naruto: Shippuden' },
-                { id: 21, name: 'One Piece' },
-                { id: 813, name: 'Dragon Ball Z' },
-                { id: 30694, name: 'Dragon Ball Super' },
-                { id: 16498, name: 'Attack on Titan' },
-                { id: 38000, name: 'Demon Slayer' },
-                { id: 40748, name: 'Jujutsu Kaisen' },
-                { id: 44511, name: 'Chainsaw Man' },
-                { id: 52299, name: 'Solo Leveling' },
-                { id: 5231, name: 'Inazuma Eleven' }
+                { id: 20, name: 'Naruto' }, { id: 1735, name: 'Naruto: Shippuden' }, { id: 21, name: 'One Piece' },
+                { id: 813, name: 'Dragon Ball Z' }, { id: 30694, name: 'Dragon Ball Super' }, { id: 16498, name: 'Attack on Titan' },
+                { id: 38000, name: 'Demon Slayer' }, { id: 40748, name: 'Jujutsu Kaisen' }, { id: 44511, name: 'Chainsaw Man' },
+                { id: 52299, name: 'Solo Leveling' }, { id: 5231, name: 'Inazuma Eleven' }
             ];
 
-            // --- Estado do Jogo ---
             let playerSecretWord = '', aiSecretWord = '';
             let playerSecretAnime = '', aiSecretAnime = '';
             let playerGuesses = [], aiGuesses = [];
-            let isPlayerTurn = true;
-            let isGameOver = false;
-            let playerWrongGuesses = 0;
-            let revealedIndices = [];
-
-            // --- Funções do Jogo ---
+            let isPlayerTurn = true, isGameOver = false;
+            let playerWrongGuesses = 0, aiWrongGuesses = 0;
+            let playerRevealedIndices = [], aiRevealedIndices = [];
 
             async function fetchCharacterFromList() {
                 try {
                     const randomAnime = ANIME_LIST[Math.floor(Math.random() * ANIME_LIST.length)];
                     const response = await fetch(`https://api.jikan.moe/v4/anime/${randomAnime.id}/characters`);
-                    if (!response.ok) throw new Error(`API Error on anime ${randomAnime.id}: ${response.status}`);
-                    
+                    if (!response.ok) throw new Error(`API Error`);
                     const data = await response.json();
-                    const characters = data.data;
-
-                    const mainCharacters = characters.filter(c => c.role === 'Main');
-                    const characterPool = mainCharacters.length > 0 ? mainCharacters : characters;
-                    
-                    if (characterPool.length === 0) {
-                        return fetchCharacterFromList();
-                    }
-
+                    const mainCharacters = data.data.filter(c => c.role === 'Main');
+                    const characterPool = mainCharacters.length > 0 ? mainCharacters : data.data;
+                    if (characterPool.length === 0) return fetchCharacterFromList();
                     const randomCharacter = characterPool[Math.floor(Math.random() * characterPool.length)];
                     const characterName = randomCharacter.character.name.split('/')[0].split('(')[0].trim();
-                    
-                    return {
-                        characterName: characterName,
-                        animeName: randomAnime.name
-                    };
+                    return { characterName, animeName: randomAnime.name };
                 } catch (error) {
-                    console.error("Error fetching character, trying again.", error);
                     await new Promise(res => setTimeout(res, 1000));
                     return fetchCharacterFromList();
                 }
             }
 
             async function startGame() {
-                isGameOver = false;
-                isPlayerTurn = true;
-                playerGuesses = [];
-                aiGuesses = [];
-                playerWrongGuesses = 0;
-                revealedIndices = [];
-
+                isGameOver = false; isPlayerTurn = true;
+                playerGuesses = []; aiGuesses = [];
+                playerWrongGuesses = 0; aiWrongGuesses = 0;
+                playerRevealedIndices = []; aiRevealedIndices = [];
                 gameStatus.textContent = 'Buscando personagens...';
-                gameStatus.className = 'text-3xl sm:text-4xl font-black text-cyan-400 uppercase tracking-wider';
                 gamePanels.classList.add('hidden');
                 playAgainButton.classList.add('hidden');
-                playerGuessesList.innerHTML = '';
-                aiGuessesList.innerHTML = '';
+                playerGuessesList.innerHTML = ''; aiGuessesList.innerHTML = '';
                 playerSecretReveal.classList.add('hidden');
-                playerSecretCharacterName.textContent = '';
                 
                 try {
                     const [char1, char2] = await Promise.all([fetchCharacterFromList(), fetchCharacterFromList()]);
-                    
-                    aiSecretWord = char1.characterName;
-                    aiSecretAnime = char1.animeName;
-                    playerSecretWord = char2.characterName;
-                    playerSecretAnime = char2.animeName;
+                    aiSecretWord = char1.characterName; aiSecretAnime = char1.animeName;
+                    playerSecretWord = char2.characterName; playerSecretAnime = char2.animeName;
 
-                    renderWordDisplay(aiWordDisplay, aiSecretWord, revealedIndices);
-                    // CORREÇÃO: Mostra o anime do personagem da IA no painel da IA
-                    playerAnimeName.textContent = `Anime: ${aiSecretAnime}`;
+                    renderWordDisplay(aiWordDisplay, aiSecretWord, aiRevealedIndices);
+                    aiAnimeName.textContent = `Anime: ${aiSecretAnime}`;
                     
-                    renderWordDisplay(playerWordDisplay, playerSecretWord, []);
-                    // CORREÇÃO: Mostra o anime do SEU personagem no SEU painel
-                    aiAnimeName.textContent = `Anime: ${playerSecretAnime}`;
+                    renderWordDisplay(playerWordDisplay, playerSecretWord, playerRevealedIndices);
+                    playerAnimeName.textContent = `Anime: ${playerSecretAnime}`;
                     
                     playerSecretCharacterName.textContent = playerSecretWord;
                     playerSecretReveal.classList.remove('hidden');
-
                     gamePanels.classList.remove('hidden');
                     updateTurnUI();
-
                 } catch (error) {
-                    console.error("Erro ao iniciar o jogo:", error);
                     gameStatus.textContent = 'Erro ao carregar. Tente novamente.';
                     playAgainButton.classList.remove('hidden');
                 }
@@ -229,12 +221,8 @@
                         charElement.className = 'bg-gray-700 rounded-md letter-box';
                         if (revealAll || revealedIdxs.includes(i)) {
                             charElement.textContent = char;
-                            if (revealedIdxs.includes(i)) {
-                                charElement.classList.add('revealed-letter');
-                            }
-                            if (revealAll) {
-                                charElement.classList.add('bg-green-700', 'text-white');
-                            }
+                            if (revealedIdxs.includes(i)) charElement.classList.add('revealed-letter');
+                            if (revealAll) charElement.classList.add('bg-green-700', 'text-white');
                         }
                     }
                     container.appendChild(charElement);
@@ -243,18 +231,15 @@
 
             function updateTurnUI() {
                 if (isGameOver) return;
-
+                playerGuessInput.disabled = !isPlayerTurn;
+                playerGuessButton.disabled = !isPlayerTurn;
                 if (isPlayerTurn) {
                     gameStatus.textContent = "Sua Vez!";
-                    playerGuessInput.disabled = false;
-                    playerGuessButton.disabled = false;
                     playerGuessInput.focus();
                     playerPanel.classList.replace('border-gray-600', 'border-cyan-500/50');
                     aiPanel.classList.replace('border-cyan-500/50', 'border-gray-600');
                 } else {
                     gameStatus.textContent = "IA está pensando...";
-                    playerGuessInput.disabled = true;
-                    playerGuessButton.disabled = true;
                     aiPanel.classList.replace('border-gray-600', 'border-cyan-500/50');
                     playerPanel.classList.replace('border-cyan-500/50', 'border-gray-600');
                     setTimeout(handleAiTurn, 2000);
@@ -265,49 +250,44 @@
                 if (!isPlayerTurn || isGameOver) return;
                 const guess = playerGuessInput.value.trim();
                 if (!guess) return;
-
                 playerGuesses.push(guess);
                 updateGuessList(playerGuessesList, playerGuesses);
                 playerGuessInput.value = '';
-
                 if (guess.toLowerCase() === aiSecretWord.toLowerCase()) {
                     gameOver(true);
                 } else {
                     playerWrongGuesses++;
-                    if (playerWrongGuesses > 0 && playerWrongGuesses % 3 === 0) {
-                        revealLetter();
-                    }
+                    if (playerWrongGuesses > 0 && playerWrongGuesses % 3 === 0) revealAiLetter();
                     isPlayerTurn = false;
                     updateTurnUI();
                 }
             }
 
-            function revealLetter() {
+            function revealLetter(word, revealedIdxs, displayContainer) {
                 const hiddenIndices = [];
-                for (let i = 0; i < aiSecretWord.length; i++) {
-                    if (aiSecretWord[i] !== ' ' && !revealedIndices.includes(i)) {
-                        hiddenIndices.push(i);
-                    }
+                for (let i = 0; i < word.length; i++) {
+                    if (word[i] !== ' ' && !revealedIdxs.includes(i)) hiddenIndices.push(i);
                 }
-
                 if (hiddenIndices.length > 0) {
                     const randomIndex = hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)];
-                    revealedIndices.push(randomIndex);
-                    renderWordDisplay(aiWordDisplay, aiSecretWord, revealedIndices);
+                    revealedIdxs.push(randomIndex);
+                    renderWordDisplay(displayContainer, word, revealedIdxs);
                 }
             }
 
+            function revealAiLetter() { revealLetter(aiSecretWord, aiRevealedIndices, aiWordDisplay); }
+            function revealPlayerLetter() { revealLetter(playerSecretWord, playerRevealedIndices, playerWordDisplay); }
+
             async function handleAiTurn() {
                 if (isPlayerTurn || isGameOver) return;
-                
                 const { characterName: aiGuess } = await fetchCharacterFromList();
-
                 aiGuesses.push(aiGuess);
                 updateGuessList(aiGuessesList, aiGuesses);
-
                 if (aiGuess.toLowerCase() === playerSecretWord.toLowerCase()) {
                     gameOver(false);
                 } else {
+                    aiWrongGuesses++;
+                    if (aiWrongGuesses > 0 && aiWrongGuesses % 3 === 0) revealPlayerLetter();
                     isPlayerTurn = true;
                     updateTurnUI();
                 }
@@ -323,29 +303,22 @@
                 isGameOver = true;
                 playerGuessInput.disabled = true;
                 playerGuessButton.disabled = true;
-                
-                if (playerWon) {
-                    gameStatus.textContent = "Você Venceu!";
-                    gameStatus.className = 'text-3xl sm:text-4xl font-black text-green-400 uppercase tracking-wider';
-                } else {
-                    gameStatus.textContent = "A IA Venceu!";
-                    gameStatus.className = 'text-3xl sm:text-4xl font-black text-red-500 uppercase tracking-wider';
-                }
-
+                gameStatus.textContent = playerWon ? "Você Venceu!" : "A IA Venceu!";
+                gameStatus.className = `text-3xl sm:text-4xl font-black uppercase tracking-wider ${playerWon ? 'text-green-400' : 'text-red-500'}`;
                 renderWordDisplay(aiWordDisplay, aiSecretWord, [], true);
                 renderWordDisplay(playerWordDisplay, playerSecretWord, [], true);
-                
                 playAgainButton.classList.remove('hidden');
             }
 
-            // --- Event Listeners ---
-            playerGuessButton.addEventListener('click', handlePlayerGuess);
-            playerGuessInput.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') handlePlayerGuess();
+            tutorialButton.addEventListener('click', () => tutorialModal.classList.replace('hidden', 'flex'));
+            closeTutorialButton.addEventListener('click', () => tutorialModal.classList.replace('flex', 'hidden'));
+            tutorialModal.addEventListener('click', (e) => {
+                if (e.target === tutorialModal) tutorialModal.classList.replace('flex', 'hidden');
             });
+            playerGuessButton.addEventListener('click', handlePlayerGuess);
+            playerGuessInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handlePlayerGuess(); });
             playAgainButton.addEventListener('click', startGame);
 
-            // --- Início do Jogo ---
             startGame();
         });
     </script>
