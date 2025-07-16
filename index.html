@@ -160,6 +160,19 @@
             let playerWrongGuesses = 0, aiWrongGuesses = 0;
             let playerRevealedIndices = [], aiRevealedIndices = [];
 
+            /**
+             * Formata o nome do personagem de "Sobrenome, Nome" para "Nome Sobrenome".
+             * @param {string} name - O nome original do personagem.
+             * @returns {string} O nome formatado.
+             */
+            function formatCharacterName(name) {
+                if (name.includes(',')) {
+                    const parts = name.split(',').map(part => part.trim());
+                    return `${parts[1]} ${parts[0]}`;
+                }
+                return name;
+            }
+
             async function fetchCharacterFromList() {
                 try {
                     const randomAnime = ANIME_LIST[Math.floor(Math.random() * ANIME_LIST.length)];
@@ -170,7 +183,11 @@
                     const characterPool = mainCharacters.length > 0 ? mainCharacters : data.data;
                     if (characterPool.length === 0) return fetchCharacterFromList();
                     const randomCharacter = characterPool[Math.floor(Math.random() * characterPool.length)];
-                    const characterName = randomCharacter.character.name.split('/')[0].split('(')[0].trim();
+                    
+                    // Limpa e formata o nome
+                    const rawName = randomCharacter.character.name.split('/')[0].split('(')[0].trim();
+                    const characterName = formatCharacterName(rawName);
+
                     return { characterName, animeName: randomAnime.name };
                 } catch (error) {
                     await new Promise(res => setTimeout(res, 1000));
