@@ -1,4 +1,4 @@
-<img width="518" height="470" alt="image" src="https://github.com/user-attachments/assets/71bc637d-230d-43cb-a672-34d4714da437" />
+<img width="523" height="472" alt="image" src="https://github.com/user-attachments/assets/6fe69aa7-ef72-4ddc-af5c-6134a25601ff" />
 
 > JOGO DE ADVINHAÇÃO DE PERSONAGENS DE ANIMES
 
